@@ -36,6 +36,21 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
+          # Status endpoint routes to admin port 8100
+          - path: /status
+            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
+            pathType: Exact
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: 8100
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: 8100
+              {{- end }}
           {{- range .paths }}
           - path: {{ .path }}
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
