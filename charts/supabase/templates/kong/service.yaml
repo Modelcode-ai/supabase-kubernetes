@@ -12,6 +12,10 @@ spec:
       targetPort: 8000
       protocol: TCP
       name: http
+    - port: 8100 # Status port
+      targetPort: 8100
+      protocol: TCP
+      name: admin
   selector:
     {{- include "supabase.kong.selectorLabels" . | nindent 4 }}
 {{- end }}
