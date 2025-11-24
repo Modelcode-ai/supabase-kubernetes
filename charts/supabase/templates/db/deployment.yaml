@@ -136,6 +136,8 @@ spec:
               name: postgres-volume
               subPath: postgres-data
             {{- end }}
+            - mountPath: /dev/shm
+              name: dshm
           {{- with .Values.db.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -158,6 +160,10 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "supabase.db.fullname" . }}-pvc
         {{- end }}
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
       {{- with .Values.db.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
